@@ -1,21 +1,34 @@
-import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useState } from 'react';
+import AppLoading from 'expo-app-loading';
+import * as Font from 'expo-font';
+import { Provider } from 'react-redux';
+
+import { store } from './store/store';
+
+import TabNavigator from './navigation/Navigator';
+
+const fetchFonts = () => {
+	return Font.loadAsync({
+		star: require('./assets/fonts/Starjedi.ttf'),
+	});
+};
 
 export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
-}
+	const [fontLoaded, setFontLoaded] = useState(false);
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+	if (!fontLoaded) {
+		return (
+			<AppLoading
+				startAsync={fetchFonts}
+				onFinish={() => setFontLoaded(true)}
+				onError={(err) => console.log(err)}
+			/>
+		);
+	}
+
+	return (
+		<Provider store={store}>
+			<TabNavigator />
+		</Provider>
+	);
+}
